@@ -81,7 +81,7 @@ identify_chimeric_seqs.py -i split_library/seqs.fna \
 ### Open Reference picking of OTUs
 
 ```bash
-pick_open_reference.py -i \
+pick_open_reference_otus.py -i split_library/seqs.fna \
     -o otus \
     -a -O 24
 ```
