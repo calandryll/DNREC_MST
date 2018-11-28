@@ -85,3 +85,22 @@ pick_open_reference_otus.py -i split_library/seqs.fna \
     -o otus \
     -a -O 24
 ```
+
+### Core Diversity Analysis
+
+```bash
+core_diversity_analyses.py -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom \
+    -o diversity \
+    -m mapping.txt \
+    -e 31511 \
+    -a -O 24 \
+    -t otus/rep_set.tre \
+    -c Site \
+    --recover_from_failure
+```
+
+The -e was determined via
+```bash
+biom summarize-table -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom > otu_summary.txt
+```
+and choosing the minimum number.
