@@ -104,3 +104,44 @@ The -e was determined via
 biom summarize-table -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom > otu_summary.txt
 ```
 and choosing the minimum number.
+
+### Filter unwanted OTUs
+
+#### Filter low abundance
+
+See [Bix et al. 2016](https://msphere.asm.org/content/1/6/e00226-16)
+```bash
+filter_otus_from_otu_table.py -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom \
+    -o otus/filtered_abundance_table.biom \
+    --min_count_fraction 0.000005
+```
+
+#### Filter Mitochondria and Chloroplasts
+
+```bash
+filter_taxa_from_otu_table.py -i otus/filtered_abundance_table.biom \
+    -o otus/filtered_abund_chloro_mito.biom \
+    -n f__Mitochondria,o__Chlorophyta,c__Chloroplast
+```
+
+### [Sourcetracker](https://github.com/danknights/sourcetracker)
+
+#### Convert to format for Sourcetracker
+
+```bash
+biom convert -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom \
+    -o nonfiltered.txt \
+    --to-tsv
+```
+
+```bash
+biom convert -i otus/filtered_abund_chloro_mito.biom \
+    -o filtered.txt \
+    --to-tsv
+```
+
+#### Run Sourcetracker
+
+```bash
+R --slave --vanilla --args -i nonfiltered.txt -m mapping.txt -o sourcetracker_1 -r 30000 --train_rarefaction 30000 < $SOURCETRACKER_PATH/sourcetracker_for_qiime.r
+```
