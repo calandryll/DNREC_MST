@@ -109,12 +109,13 @@ and choosing the minimum number.
 
 #### Filter low abundance
 
-See [Bix et al. 2016](https://msphere.asm.org/content/1/6/e00226-16)
+See [Bix et al. 2016](https://msphere.asm.org/content/1/6/e00226-16)*
 ```bash
 filter_otus_from_otu_table.py -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom \
     -o otus/filtered_abundance_table.biom \
     --min_count_fraction 0.000005
 ```
+*Note: min_count_fraction potentially eliminates too many OTUs.  Will explore other options.
 
 #### Filter Mitochondria and Chloroplasts
 
