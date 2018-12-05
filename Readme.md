@@ -210,3 +210,22 @@ filter_taxa_from_otu_table.py -i otus/filtered_abundance.biom \
     -o otus/filtered_abund_chloro_mito.biom \
     -n f__Mitochondria,o__Chlorophyta,c__Chloroplast,Unassigned
 ```
+
+### Core Diversity Analysis
+
+```bash
+core_diversity_analyses.py -i otus/filtered_abund_chloro_mito.biom \
+    -o diversity \
+    -m mapping.txt \
+    -e 17309 \
+    -a -O 24 \
+    -t otus/rep_set.tre \
+    -c Site \
+    --recover_from_failure
+```
+
+The -e was determined via
+```bash
+biom summarize-table -i otus/filtered_abund_chloro_mito.biom > otu_summary.txt
+```
+and choosing the minimum number.
