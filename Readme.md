@@ -193,3 +193,20 @@ pick_open_reference_otus.py -i split_library/seqs.fna \
     -s 0.1 \
     -o otus
 ```
+
+### Filter unwanted OTUs
+
+#### Filter low abundance
+
+See [Bix et al. 2016](https://msphere.asm.org/content/1/6/e00226-16)*
+```bash
+filter_otus_from_otu_table.py -i otus/otu_table_mc2_w_tax_no_pynast_failures.biom \
+    -o otus/filtered_abundance.biom \
+    --min_count_fraction 0.000005
+```
+
+```bash
+filter_taxa_from_otu_table.py -i otus/filtered_abundance.biom \
+    -o otus/filtered_abund_chloro_mito.biom \
+    -n f__Mitochondria,o__Chlorophyta,c__Chloroplast,Unassigned
+```
