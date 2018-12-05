@@ -170,3 +170,26 @@ join_paired_ends.py -f November_forward.fastq.gz \
     -j 10 \
     -p 15
 ```
+
+### Split Library
+
+```bash
+split_libraries_fastq.py -i fastq/July/fastqjoin.join.fastq,/fastq/November/fastqjoin.join.fastq \
+    -b fastq/July/fastqjoin.join_barcodes.fastq,/fastq/November/fastqjoin.join_barcodes.fastq \
+    -m July_mapping.txt,November_mapping.txt \
+    -q 19 \
+    -r 5 \
+    -p 0.70 \
+    --rev_comp_mapping_barcodes \
+    -o split_library \
+    --barcode_type 8
+```
+
+### Open Reference OTU Picking
+
+```bash
+pick_open_reference_otus.py -i split_library/seqs.fna \
+    -a -O 24 \
+    -s 0.1 \
+    -o otus
+```
