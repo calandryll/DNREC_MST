@@ -146,3 +146,27 @@ biom convert -i otus/filtered_abund_chloro_mito.biom \
 ```bash
 R --slave --vanilla --args -i nonfiltered.txt -m mapping.txt -o sourcetracker_1 -r 30000 --train_rarefaction 30000 < $SOURCETRACKER_PATH/sourcetracker_for_qiime.r
 ```
+
+## Sample Analysis V2
+
+Raw samples were processed using [FASTQ Processor](http://www.mrdnalab.com/16freesoftware/fastq-processor.html) to create forward, reverse and barcode fastq files.  Sample analysis was carried out similar to [Bik, et al. 2016](https://msphere.asm.org/content/1/6/e00226-16).
+
+### Join Paired Ends
+
+```bash
+join_paired_ends.py -f July_forward.fastq.gz \
+    -r July_reverse.fastq.gz \
+    -b July_barcodes.fastq.gz \
+    -o July \
+    -j 10 \
+    -p 15
+```
+
+```bash
+join_paired_ends.py -f November_forward.fastq.gz \
+    -r November_reverse.fastq.gz \
+    -b November_barcodes.fastq.gz \
+    -o November \
+    -j 10 \
+    -p 15
+```
