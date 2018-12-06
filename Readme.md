@@ -229,3 +229,19 @@ The -e was determined via
 biom summarize-table -i otus/filtered_abund_chloro_mito.biom > otu_summary.txt
 ```
 and choosing the minimum number.
+
+### [Sourcetracker](https://github.com/danknights/sourcetracker)
+
+#### Convert to format for Sourcetracker
+
+```bash
+biom convert -i otus/filtered_abund_chloro_mito.biom \
+    -o filtered_abund_chloro_mito.txt \
+    --to-tsv
+```
+
+#### Run Sourcetracker
+
+```bash
+R --slave --vanilla --args -i filtered_abund_chloro_mito.txt -m mapping3.txt -o sourcetracker_1 -r 30000 --train_rarefaction 30000 < $SOURCETRACKER_PATH/sourcetracker_for_qiime.r
+```
