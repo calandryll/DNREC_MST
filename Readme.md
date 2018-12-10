@@ -245,3 +245,64 @@ biom convert -i otus/filtered_abund_chloro_mito.biom \
 ```bash
 R --slave --vanilla --args -i filtered_abund_chloro_mito.txt -m mapping3.txt -o sourcetracker_1 -r 30000 --train_rarefaction 30000 < $SOURCETRACKER_PATH/sourcetracker_for_qiime.r
 ```
+
+## QIIME 2
+
+### Data Import
+Since sequencing was carried out in multiple runs, importing should be carried out in separate steps.
+
+```bash
+qiime tools import \
+    --type EMPPairedEndSequences \
+    --input-path /media/science/microbiome/DNREC_MST/fastq/July \
+    --output-path july_paired_end.qza
+```
+
+```bash
+qiime tools import \
+    --type EMPPairedEndSequences \
+    --input-path /media/science/microbiome/DNREC_MST/fastq/November \
+    --output-path november_paired_end.qza
+```
+
+### Demulitplex Samples
+
+```bash
+qiime demux emp-paired \
+    --i-seqs july_paired_end.qza \
+    --m-barcodes-file ../July_mapping.txt \
+    --m-barcodes-column BarcodeSequence \
+    --o-per-sample-sequences july_demux.qza
+```
+
+```bash
+qiime demux emp-paired \
+--i-seqs november_paired_end.qza \
+--m-barcodes-file ../November_mapping.txt \
+--m-barcodes-column BarcodeSequence \
+--o-per-sample-sequences november_demux.qza
+```
+
+### DADA2 Analysis
+
+```bash
+qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs july_demux.qza \
+    --p-trunc-len-f 0 \
+    --p-trunc-len-r 0 \
+    --p-n-threads 0 \
+    --o-table july_dada2_table.qza \
+    --o-representative-sequences july_dada2_rep_seqs.qza \
+    --o-denoising-stats july_dada2_stats.qza
+```
+
+```bash
+qiime dada2 denoise-paired \
+--i-demultiplexed-seqs july_demux.qza \
+--p-trunc-len-f 0 \
+--p-trunc-len-r 0 \
+--p-n-threads 0 \
+--o-table july_dada2_table.qza \
+--o-representative-sequences july_dada2_rep_seqs.qza \
+--o-denoising-stats july_dada2_stats.qza
+```
