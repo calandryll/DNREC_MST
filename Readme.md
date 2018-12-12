@@ -307,6 +307,22 @@ qiime dada2 denoise-paired \
     --o-denoising-stats november_dada2_stats.qza
 ```
 
+#### Combining DADA2 analysis
+Because samples were done on separate runs, each have their own unique noise associated with that run.  Therefore, QC and feature table construction should be done separately before combining.
+```bash
+qiime feature-table merge \
+    --i-tables july_dada2_table.qza \
+    --i-tables november_dada2_table.qza \
+    --o-merged-table combined_dada2_table.qza
+```
+
+```bash
+qiime feature-table merge-seqs \
+    --i-data july_dada2_rep_seqs.qza \
+    --i-data november_dada2_rep_seqs.qza \
+    --o-merged-data combined_dada2_rep_seqs.qza
+```
+
 ### Generate tree for diversity analysis
 
 ```bash
@@ -320,9 +336,39 @@ qiime phylogeny align-to-tree-mafft-fasttree \
 
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
---i-sequences november_dada2_rep_seqs.qza \
---o-alignment november_dada2_aligned_rep_seqs.qza \
---o-masked-alignment november_dada2_masked_aligned_rep_seqs.qza \
---o-tree november_unrooted_tree.qza \
---o-rooted-tree november_rooted_tree.qza
+    --i-sequences november_dada2_rep_seqs.qza \
+    --o-alignment november_dada2_aligned_rep_seqs.qza \
+    --o-masked-alignment november_dada2_masked_aligned_rep_seqs.qza \
+    --o-tree november_unrooted_tree.qza \
+    --o-rooted-tree november_rooted_tree.qza
+```
+
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+    --i-sequences combined_dada2_rep_seqs.qza \
+    --o-alignment combined_dada2_aligned_rep_seqs.qza \
+    --o-masked-alignment combined_dada2_masked_aligned_rep_seqs.qza \
+    --o-tree combined_unrooted_tree.qza \
+    --o-rooted-tree combined_rooted_tree.qza
+```
+
+### Diversity Analysis
+July sampling depth 27871, based on the minimum frequency.  November sampling depth 18104.
+
+```bash
+qiime diversity core-metrics-phylogenetic \
+    --i-phylogeny july_rooted_tree.qza \
+    --i-table july_dada2_table.qza \
+    --p-sampling-depth 27871 \
+    --m-metadata-file ../July_mapping.txt \
+    --output-dir july_diversity
+```
+
+```bash
+qiime diversity core-metrics-phylogenetic \
+    --i-phylogeny november_rooted_tree.qza \
+    --i-table november_dada2_table.qza \
+    --p-sampling-depth 18104 \
+    --m-metadata-file ../November_mapping.txt \
+    --output-dir november_diversity
 ```
