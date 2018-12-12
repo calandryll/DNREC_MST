@@ -277,10 +277,10 @@ qiime demux emp-paired \
 
 ```bash
 qiime demux emp-paired \
---i-seqs november_paired_end.qza \
---m-barcodes-file ../November_mapping.txt \
---m-barcodes-column BarcodeSequence \
---o-per-sample-sequences november_demux.qza
+    --i-seqs november_paired_end.qza \
+    --m-barcodes-file ../November_mapping.txt \
+    --m-barcodes-column BarcodeSequence \
+    --o-per-sample-sequences november_demux.qza
 ```
 
 ### DADA2 Analysis
@@ -298,11 +298,31 @@ qiime dada2 denoise-paired \
 
 ```bash
 qiime dada2 denoise-paired \
---i-demultiplexed-seqs july_demux.qza \
---p-trunc-len-f 0 \
---p-trunc-len-r 0 \
---p-n-threads 0 \
---o-table july_dada2_table.qza \
---o-representative-sequences july_dada2_rep_seqs.qza \
---o-denoising-stats july_dada2_stats.qza
+    --i-demultiplexed-seqs november_demux.qza \
+    --p-trunc-len-f 0 \
+    --p-trunc-len-r 0 \
+    --p-n-threads 0 \
+    --o-table november_dada2_table.qza \
+    --o-representative-sequences november_dada2_rep_seqs.qza \
+    --o-denoising-stats november_dada2_stats.qza
+```
+
+### Generate tree for diversity analysis
+
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+    --i-sequences july_dada2_rep_seqs.qza \
+    --o-alignment july_dada2_aligned_rep_seqs.qza \
+    --o-masked-alignment july_dada2_masked_aligned_rep_seqs.qza \
+    --o-tree july_unrooted_tree.qza \
+    --o-rooted-tree july_rooted_tree.qza
+```
+
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+--i-sequences november_dada2_rep_seqs.qza \
+--o-alignment november_dada2_aligned_rep_seqs.qza \
+--o-masked-alignment november_dada2_masked_aligned_rep_seqs.qza \
+--o-tree november_unrooted_tree.qza \
+--o-rooted-tree november_rooted_tree.qza
 ```
