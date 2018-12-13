@@ -372,3 +372,67 @@ qiime diversity core-metrics-phylogenetic \
     --m-metadata-file ../November_mapping.txt \
     --output-dir november_diversity
 ```
+
+```bash
+qiime diversity core-metrics-phylogenetic \
+    --i-phylogeny combined_rooted_tree.qza \
+    --i-table combined_dada2_table.qza \
+    --p-sampling-depth 18104 \
+    --m-metadata-file ../mapping2.txt \
+    --output-dir combined_diversity
+```
+
+```bash
+qiime diversity alpha-group-significance \
+    --i-alpha-diversity combined_diversity/faith_pd_vector.qza \
+    --m-metadata-file ../mapping2.txt \
+    --o-visualization combined_diversity/faith_pd_vector.qzv
+```
+
+```bash
+qiime diversity alpha-group-significance \
+    --i-alpha-diversity combined_diversity/evenness_vector.qza \
+    --m-metadata-file ../mapping2.txt \
+    --o-visualization combined_diversity/evenness_vector.qzv
+```
+
+```bash
+qiime diversity beta-group-significance \
+    --i-distance-matrix combined_diversity/unweighted_unifrac_distance_matrix.qza \
+    --m-metadata-file ../mapping2.txt \
+    --m-metadata-column Site \
+    --o-visualization combined_diversity/unweighted-unifrac-site-significance.qzv \
+    --p-pairwise
+```
+
+```bash
+qiime diversity beta-group-significance \
+    --i-distance-matrix combined_diversity/unweighted_unifrac_distance_matrix.qza \
+    --m-metadata-file ../mapping2.txt \
+    --m-metadata-column Month \
+    --o-visualization combined_diversity/unweighted-unifrac-month-significance.qzv \
+    --p-pairwise
+```
+
+### Taxonomy
+
+```bash
+qiime feature-classifier classify-sklearn \
+    --i-classifier /media/science/microbiome/DNREC_MST/reference_sets/gg-13-8-99-515-806-nb-classifier.qza \
+    --i-reads combined_dada2_rep_seqs.qza \
+    --o-classification combined_taxonomy.qza
+```
+
+```bash
+qiime metadata tabulate \
+    --m-input-file combined_taxonomy.qza \
+    --o-visualization combined_taxonomy.qzv
+```
+
+```bash
+qiime taxa barplot \
+    --i-table combined_dada2_table.qza \
+    --i-taxonomy combined_taxonomy.qza \
+    --m-metadata-file ../mapping2.txt \
+    --o-visualization combined_taxa_barplot.qzv
+```
