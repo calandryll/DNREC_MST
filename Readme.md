@@ -436,3 +436,40 @@ qiime taxa barplot \
     --m-metadata-file ../mapping2.txt \
     --o-visualization combined_taxa_barplot.qzv
 ```
+
+### Export for SourceTracker
+Open Reference search at 97%
+
+```bash
+qiime vsearch cluster-features-open-reference \
+    --i-sequences combined_dada2_rep_seqs.qza \
+    --i-table combined_dada2_table.qza \
+    --i-reference-sequences /media/science/microbiome/DNREC_MST/reference_sets/gg_13_8_97_otus.qza \
+    --p-perc 0.97 \
+    --o-clustered-table table_gg_or_97.qza \
+    --o-clustered-sequences rep_seqs_gg_or_97.qza \
+    --o-new-reference-sequences new-ref-sequences \
+    --verbose
+```
+
+```bash
+qiime tools export \
+    --input-path table_gg_or_97.qza \
+    --output-path $PWD
+```
+
+```bash
+biom add-metadata \
+    -i feature-table.biom \
+    -o feature-table-tax.biom \
+    --observation-metadata-fp ../reference_sets/gg_13_8_otus/taxonomy/97_otu_taxonomy.txt \
+    --sc-separated taxonomy
+```
+
+```bash
+biom convert \
+    --table-type="OTU table" \
+    -i feature-table-tax.biom \
+    -o feature-table-tax.txt \
+    --to-tsv
+```
