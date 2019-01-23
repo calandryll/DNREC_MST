@@ -74,7 +74,7 @@ server = function(input, output) {
     st.plot = st2 %>% 
       filter(Month == input$var) %>% 
       ggplot() +
-      geom_bar_interactive(aes(x = Path, y = Percent, fill = Factor, tooltip = Percent), stat = 'identity', position = position_fill(reverse = TRUE)) +
+      geom_bar_interactive(aes(x = Path, y = Percent, fill = Factor, tooltip = Percent, data_id = Factor), stat = 'identity', position = position_fill(reverse = TRUE)) +
       scale_fill_manual(name="Fecal\nSource", 
                         values = c('#a6cee3', 
                                    '#1f78b4', 
@@ -116,9 +116,12 @@ server = function(input, output) {
     st3 = st %>% 
       gather(Factor, Percent, 3:15)
     
-    colnames(st3) = c('SampleID', 'Iteration', 'STORET', 'Site', 'Month', 'Path', 'Factor', 'Percent')
+    #colnames(st3) = c('SampleID', 'Iteration', 'STORET', 'Site', 'Month', 'Path', 'Factor', 'Percent')
     
-    st3 %>% 
+    st3 %>%  
+      filter(Month != 'June Rain') %>%
+      mutate(Month = parse_date_time2(Month, 'B'), 
+             Month = month(Month, label = TRUE)) %>%
       filter(Site == input$site) %>%
       filter(Factor != 'Unknown') %>%
       filter(Factor == input$fecal) %>%
@@ -146,7 +149,8 @@ server = function(input, output) {
                                    '#ffff99', 
                                    '#b15928', 
                                    '#313695'), 
-                        guide = FALSE)
+                        guide = FALSE) + 
+      scale_y_continuous(labels = scales::percent)
     
   })
   
