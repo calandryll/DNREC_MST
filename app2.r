@@ -19,53 +19,53 @@ ui = fluidPage(
   theme = shinytheme('paper'),
   title = 'DNREC MST Pilot Study',
   tabsetPanel(type = 'tabs',
-              tabPanel('Month Plots', ggiraphOutput('plot')),
-              tabPanel('Fecal Source', plotOutput('fecal_plot')),
+              tabPanel('Month Plots', ggiraphOutput('plot'), 
+                       fluidRow(
+                         column(3,
+                                selectInput('var',
+                                            label = 'Choose Month to display',
+                                            choices = list('March',                                         
+                                                           'April', 
+                                                           'May', 
+                                                           'June', 
+                                                           'June Rain',
+                                                           'July',
+                                                           'August',
+                                                           'September',
+                                                           'October'),
+                                            selected = 'March'
+                             )))),
+              tabPanel('Fecal Source', plotOutput('fecal_plot'),
+                       fluidRow(
+                         column(3,
+                                selectInput('fecal',
+                                          label = 'Choose Fecal Source',
+                                          choices = list('Cat',
+                                                         'Chicken',
+                                                         'Cow',
+                                                         'Dog',
+                                                         'Duck',
+                                                         'Effluent',
+                                                         'Goat',
+                                                         'Goose',
+                                                         'Horse',
+                                                         'Human',
+                                                         'Pig',
+                                                         'Sheep')
+                              )),
+                           column(3,
+                              selectInput('site',
+                                          label = 'Choose Site',
+                                          choices = list('Jimtown Road',
+                                                         'Bundicks Branch',
+                                                         'Goslee Pond',
+                                                         'Misty Lane',
+                                                         'Rt 24 Marina',
+                                                         'West Lane',
+                                                         'Mouth')
+                              )))),
               tabPanel('Entero Levels', plotOutput('entero_plot'))
-              ),
-  fluidRow(
-    column(3,
-    selectInput('var',
-                label = 'Choose Month to display',
-                choices = list('March', 
-                               'April', 
-                               'May', 
-                               'June', 
-                               'June Rain',
-                               'July',
-                               'August',
-                               'September',
-                               'October'),
-                selected = 'March'
-    )),
-    column(3,
-    selectInput('fecal',
-                label = 'Choose Fecal Source',
-                choices = list('Cat',
-                               'Chicken',
-                               'Cow',
-                               'Dog',
-                               'Duck',
-                               'Effluent',
-                               'Goat',
-                               'Goose',
-                               'Horse',
-                               'Human',
-                               'Pig',
-                               'Sheep')
-                )),
-    column(3,
-    selectInput('site',
-                label = 'Choose Site',
-                choices = list('Jimtown Road',
-                               'Bundicks Branch',
-                               'Goslee Pond',
-                               'Misty Lane',
-                               'Rt 24 Marina',
-                               'West Lane',
-                               'Mouth')
-                )))
-
+              )
 
 )
 
@@ -97,7 +97,9 @@ server = function(input, output) {
             legend.title = element_text(face = 'bold'), 
             panel.background = element_blank(), 
             panel.border = element_rect(color = 'black', fill = NA), 
-            legend.position = 'bottom') +
+            legend.position = 'bottom',
+            axis.text.x = element_text(size = 12),
+            axis.text.y = element_text(size = 14)) +
       labs(y = 'Percentage') + 
       scale_x_continuous(breaks = c(1,2,3,4,5,6,7), 
                          labels = c('Jimtown\nRd', 
@@ -133,7 +135,8 @@ server = function(input, output) {
             axis.title.y = element_text(face = 'bold'), 
             legend.title = element_text(face = 'bold'), 
             panel.background = element_blank(), 
-            panel.border = element_rect(color = 'black', fill = NA)) +
+            panel.border = element_rect(color = 'black', fill = NA),
+            axis.text = element_text(size = 14)) +
       labs(y = 'Percentage') +
       scale_fill_manual(name="Fecal\nSource", 
                         values = c('#a6cee3', 
