@@ -132,13 +132,10 @@ server = function(input, output) {
       gather(Factor, Percent, 3:15)
     
     st3 %>%  
-      filter(Month != 'June Rain') %>%
-      mutate(Month = parse_date_time2(Month, 'B'), 
-             Month = month(Month, label = TRUE)) %>%
       filter(Site == input$site) %>%
       filter(Factor != 'Unknown') %>%
       filter(Factor == input$fecal) %>%
-      ggplot(aes(Month, Percent)) +
+      ggplot(aes(as.factor(Month2), Percent)) +
       geom_boxplot(aes(fill = Factor)) +
       theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
@@ -164,7 +161,17 @@ server = function(input, output) {
                                    '#b15928', 
                                    '#313695'), 
                         guide = FALSE) + 
-      scale_y_continuous(labels = scales::percent)
+      scale_y_continuous(labels = scales::percent) +
+      scale_x_discrete(breaks = c(1:9),
+                       labels = c('March',                                         
+                                  'April', 
+                                  'May', 
+                                  'June', 
+                                  'June Rain',
+                                  'July',
+                                  'August',
+                                  'September',
+                                  'October'))
     
   })
   
