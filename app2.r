@@ -64,10 +64,23 @@ ui = fluidPage(
                                                          'West Lane',
                                                          'Mouth')
                               )))),
-              tabPanel('Entero Levels', plotOutput('entero_plot'))
+              tabPanel('Entero Levels', plotOutput('entero_plot'),
+                       fluidRow(
+                         column(3,
+                                selectInput('site2',
+                                            label = 'Choose Site',
+                                            choices = list('Jimtown Road' = '308411',
+                                                           'Bundicks Branch' = '308371',
+                                                           'Goslee Pond' = '308291',
+                                                           'Misty Lane' = '308024',
+                                                           'Rt 24 Marina' = '308021',
+                                                           'West Lane' = '308018',
+                                                           'Mouth' = '308015')
+                         
+                       )))
               )
 
-)
+))
 
 server = function(input, output) {
   output$plot = renderggiraph({
@@ -118,8 +131,6 @@ server = function(input, output) {
     st3 = st %>% 
       gather(Factor, Percent, 3:15)
     
-    #colnames(st3) = c('SampleID', 'Iteration', 'STORET', 'Site', 'Month', 'Path', 'Factor', 'Percent')
-    
     st3 %>%  
       filter(Month != 'June Rain') %>%
       mutate(Month = parse_date_time2(Month, 'B'), 
@@ -159,11 +170,13 @@ server = function(input, output) {
   
   output$entero_plot = renderPlot({
     love_creek %>% 
-      ggplot(aes(as.factor(Path), Entero)) + 
+      filter(Site == input$site2) %>%
+      group_by(Month, Site) %>%
+      summarise(Entero = mean(Entero)) %>%
+      ggplot(aes(as.factor(Month), Entero)) + 
       geom_hline(yintercept = 104, color = 'blue', linetype = 2, size = 0.75) + 
       geom_hline(yintercept = 185, color = 'red', linetype = 4, size = 0.75) + 
-      stat_boxplot(geom = 'errorbar') + 
-      geom_boxplot() + 
+      geom_bar(stat = 'identity') + 
       scale_y_continuous(limits = c(0, 1000)) +
       theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
@@ -172,15 +185,17 @@ server = function(input, output) {
             legend.title = element_text(face = 'bold'), 
             panel.background = element_blank(), 
             panel.border = element_rect(color = 'black', fill = NA)) +
-      labs(y = expression(paste('Enterococci (mpn 100 ml'^-1,')'))) + 
-      scale_x_discrete(breaks = c(1,2,3,4,5,6,7), 
-                       labels = c('Jimtown\nRd', 
-                                  'Bundicks\nBranch', 
-                                  'Goslee\nPond', 
-                                  'Misty\nLane', 
-                                  'Rt.\n24', 
-                                  'West\nLane', 
-                                  'Mouth of\nLove Creek'))
+      labs(y = expression(paste('Enterococci (mpn 100 ml'^-1,')'))) +
+      scale_x_discrete(breaks = c(1:9),
+                       labels = c('March',                                         
+                                  'April', 
+                                  'May', 
+                                  'June', 
+                                  'June Rain',
+                                  'July',
+                                  'August',
+                                  'September',
+                                  'October'))
   })
   
 }
