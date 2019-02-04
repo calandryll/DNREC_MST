@@ -72,7 +72,10 @@ ui = fluidPage(
                                      height = '800px'
                                      )
                        ),
-              tabPanel('Raw Data',
+              tabPanel('Sourcetracker Raw Data',
                        dataTableOutput('raw_data')
-                       )
+                       ),
+              tabPanel('Environmental Raw Data',
+                       dataTableOutput('raw_lovecreek')
+              )
   ))

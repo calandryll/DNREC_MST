@@ -184,4 +184,15 @@ server = function(input, output) {
               )
   })
   
+  output$raw_lovecreek = renderDataTable({
+    love_creek2 = love_creek %>%
+      select(-thres, -second, -Path, -Month)
+    datatable(love_creek2, 
+              options = list(pageLength = 10, dom = 'Bftip', 
+                             buttons = c('excel')), 
+              rownames = FALSE,
+              extensions = 'Buttons'
+    )
+  })
+  
 }
