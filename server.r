@@ -17,10 +17,16 @@ st2 = st %>%
   summarise_all(mean) %>%
   gather(Factor, Percent, 3:15)
 
+# According to Title 7 7401 Surface Water Quality Standards
+# Marine water are considered >= 5 ppt
+# pg 12 gives levels of Primary and Secondary Contact
+
 love_creek = love_creek %>% 
   mutate(Date = ymd(Date), Site = as.factor(Site), 
-         thres = ifelse(Entero >= 104 & Salinity >= 15, T, 
-                        ifelse(Entero >= 185 & Salinity <= 2, T, F)))
+         thres = ifelse(Entero >= 104 & Salinity >= 5, 1, 
+                        ifelse(Entero >= 185 & Salinity < 5, 1, NA)),
+         second = ifelse(Entero >= 520 & Salinity >= 5, 1,
+                         ifelse(Entero >= 925 & Salinity < 5, 1, NA)))
 
 server = function(input, output) {
   output$plot = renderggiraph({
@@ -68,7 +74,7 @@ server = function(input, output) {
                                     'Mouth of\nLove Creek')) + 
       scale_y_continuous(labels = scales::percent)
     
-    ggiraph(code = print(st.plot))
+    ggiraph(code = print(st.plot), selection_type = 'none')
   })
   
   output$fecal_plot = renderPlot({
@@ -121,13 +127,14 @@ server = function(input, output) {
   output$entero_plot = renderPlot({
     love_creek %>% 
       filter(Site == input$site) %>%
-      group_by(Month, Site) %>%
-      summarise(Entero = mean(Entero)) %>%
+      select(-Sample.ID, -Location) %>% 
+      group_by(Site, Month) %>% 
+      summarise_all(mean) %>%
       ggplot() + 
-      geom_hline(yintercept = 104, color = 'blue', linetype = 2, size = 0.75) + 
-      geom_hline(yintercept = 185, color = 'red', linetype = 4, size = 0.75) + 
-      geom_bar(stat = 'identity', aes(as.factor(Month), Entero)) + 
-      scale_y_continuous(limits = c(0, 1000)) +
+      geom_bar(stat = 'identity', aes(as.factor(Month), Entero, 
+                                      fill = as.factor(thres),
+                                      color = as.factor(second)),
+               lwd = 0.75) + 
       theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
             axis.title.x = element_blank(), 
@@ -135,7 +142,8 @@ server = function(input, output) {
             legend.title = element_text(face = 'bold'), 
             panel.background = element_blank(), 
             panel.border = element_rect(color = 'black', fill = NA),
-            axis.text = element_text(size = 14)) +
+            axis.text = element_text(size = 14),
+            legend.position = 'bottom') +
       labs(y = expression(paste('Enterococci (mpn 100 ml'^-1,')'))) +
       scale_x_discrete(breaks = c(1:9),
                        labels = c('March',                                         
@@ -146,7 +154,15 @@ server = function(input, output) {
                                   'July',
                                   'August',
                                   'September',
-                                  'October'))
+                                  'October')) +
+      scale_fill_manual(name = 'Entero Level',
+                        values = c('#313695'),
+                        labels = c('Above Primary Contact'),
+                        breaks = c(1)) +
+      scale_color_manual(name = '',
+                         values = c('red'),
+                         labels = c('Above Secondary Contact'),
+                         breaks = c(1))
   })
   
   output$love_creek = renderLeaflet({
@@ -161,8 +177,11 @@ server = function(input, output) {
     st4 = st %>%
       select(Site, STORET, Month, Iteration, Cat:Unknown)
     datatable(st4, 
-              options = list(pageLength = 10, dom = 'ftip'), 
-              rownames = FALSE)
+              options = list(pageLength = 10, dom = 'Bftip', 
+                             buttons = c('excel')), 
+              rownames = FALSE,
+              extensions = 'Buttons'
+              )
   })
   
 }
