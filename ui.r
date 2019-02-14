@@ -12,6 +12,11 @@ ui = fluidPage(
   title = 'DNREC MST Pilot Study',
   tabsetPanel(type = 'tabs',
               tabPanel('Introduction', includeHTML('about.html')),
+              tabPanel('Watershed Map', 
+                       leafletOutput('love_creek', 
+                                     height = '800px'
+                                    )
+                      ),
               tabPanel('Monthly Plots',
                        sidebarLayout(
                          sidebarPanel(width = 2,
@@ -67,11 +72,8 @@ ui = fluidPage(
                   )
                 )
               ),
-              tabPanel('Watershed Map', 
-                       leafletOutput('love_creek', 
-                                     height = '800px'
-                                     )
-                       ),
+              tabPanel('Multi-Dimensional Scaling Plot',
+                       ggiraphOutput('mds'))
               tabPanel('Sourcetracker Raw Data',
                        dataTableOutput('raw_data')
                        ),

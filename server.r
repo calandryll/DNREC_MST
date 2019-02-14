@@ -9,7 +9,8 @@ library(DT)
 
 st = read_csv('../csv/sourcetracker.csv')
 points = read_csv('../csv/site_locations.csv')
-love_creek = read.csv('../csv/love_creek_chem.csv')
+love_creek = read_csv('../csv/love_creek_chem.csv')
+mds = read_csv('../csv/wunifrac.csv')
 
 st2 = st %>% 
   select(-SampleID, -Iteration, -Site, -STORET, -Month2) %>%
@@ -193,6 +194,40 @@ server = function(input, output) {
               rownames = FALSE,
               extensions = 'Buttons'
     )
+  })
+  
+  output$mds = renderggiraph({
+    mds.plot = mds %>%
+      ggplot(aes(MDS1, MDS2)) +
+      geom_point_interactive(aes(tooltip = Location, color = as.factor(Path2), shape = as.factor(Month3)), 
+                             size = 2) +
+      theme(panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.text = element_blank(),
+            axis.title = element_blank(), 
+            axis.ticks = element_blank(),
+            legend.title = element_text(face = 'bold'), 
+            panel.background = element_rect(color = 'black', fill = NA), 
+            legend.key = element_blank()) +
+      scale_shape_manual(values = c(15, 16, 17, 18, 25, 3, 4, 24, 23), 
+                         name="Month", 
+                         guide = guide_legend(),
+                         labels = c('March',
+                                    'April',
+                                    'May',
+                                    'June',
+                                    'June Rain',
+                                    'July',
+                                    'August',
+                                    'September',
+                                    'October')) + 
+      scale_color_manual(name = '',
+                         labels = c('Non-tidal',
+                                    'Tidal'),
+                         values = c('#313695',
+                                    '#e31a1c'))
+    
+    ggiraph(code = print(mds.plot), selection_type = 'none')
   })
   
 }
