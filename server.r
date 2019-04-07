@@ -198,8 +198,10 @@ server = function(input, output) {
   
   output$mds = renderggiraph({
     mds.plot = mds %>%
-      ggplot(aes(MDS1, MDS2)) +
-      geom_point_interactive(aes(tooltip = Location, color = as.factor(Path2), shape = as.factor(Month3)), 
+      mutate(Path2 = as.factor(Path2), Month3 = as.factor(Month3)) %>%
+      ggplot() +
+      geom_point_interactive(aes(x = MDS1, y = MDS2, color = Path2,
+                                 tooltip = Location, shape = Month3), 
                              size = 2) +
       theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
@@ -209,7 +211,7 @@ server = function(input, output) {
             legend.title = element_text(face = 'bold'), 
             panel.background = element_rect(color = 'black', fill = NA), 
             legend.key = element_blank()) +
-      scale_shape_manual(values = c(15, 16, 17, 18, 25, 3, 4, 24, 23), 
+      scale_shape_manual(values = c(15, 16, 17, 18, 25, 21, 22, 24, 23), 
                          name="Month", 
                          guide = guide_legend(),
                          labels = c('March',
@@ -227,7 +229,7 @@ server = function(input, output) {
                          values = c('#313695',
                                     '#e31a1c'))
     
-    ggiraph(code = print(mds.plot), selection_type = 'none')
+    ggiraph(code = print(mds.plot))
   })
   
 }

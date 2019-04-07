@@ -73,7 +73,8 @@ ui = fluidPage(
                 )
               ),
               tabPanel('Multi-Dimensional Scaling Plot',
-                       ggiraphOutput('mds'))
+                       ggiraphOutput('mds')
+                       ),
               tabPanel('Sourcetracker Raw Data',
                        dataTableOutput('raw_data')
                        ),
