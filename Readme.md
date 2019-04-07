@@ -438,7 +438,7 @@ qiime taxa barplot \
 ```
 
 ### Export for SourceTracker
-Open Reference search at 97%
+Open Reference search at 97% or 99%
 
 ```bash
 qiime vsearch cluster-features-open-reference \
@@ -465,11 +465,24 @@ biom add-metadata \
     --observation-metadata-fp ../reference_sets/gg_13_8_otus/taxonomy/97_otu_taxonomy.txt \
     --sc-separated taxonomy
 ```
-
+Not needed for use in Sourcetracker2
 ```bash
 biom convert \
     --table-type="OTU table" \
     -i feature-table-tax.biom \
     -o feature-table-tax.txt \
     --to-tsv
+```
+
+### Sourcetracker 2 analysis
+Multiprocess analysis
+
+```bash
+sourcetracker2 gibbs -i gg_99/feature-table-tax.biom \
+    -m ../mapping3.txt \
+    -o st2_1 \
+    --alpha1 1e-3 \
+    --alpha2 1e-1 \
+    --jobs 20 \
+    --beta 1
 ```
